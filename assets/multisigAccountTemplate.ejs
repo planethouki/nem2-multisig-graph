@@ -1,0 +1,13 @@
+<div class="cell cell-level-<%= level %>">
+  <div class="ellipsis">
+    <%= entry.multisig.accountPublicKey %>
+  </div>
+  <div class="ellipsis">
+    <%= entry.multisig.accountAddress %>
+  </div>
+  <% if (entry.multisig.cosignatoryPublicKeys.length > 0) { %>
+    <div>
+      <%= entry.multisig.minApproval %> of <%= entry.multisig.cosignatoryPublicKeys.length %>
+    </div>
+  <% } %>
+</div>

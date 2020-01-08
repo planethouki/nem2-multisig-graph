@@ -1,0 +1,38 @@
+$primary: #FF94CB;
+$secondary: #807078;
+$success: #28A745;
+$info: #CC76A3;
+$warning: #FFC107;
+$danger: #ff0000;
+$light: #FFE0F0;
+$dark: #804A66;
+
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap-vue/src/index.scss';
+
+
+#chart_div {
+  overflow-y: hidden;
+  overflow-x: auto;
+  //cursor: all-scroll;
+  .cell {
+    @extend .card;
+    text-align: center;
+    position: relative;
+    width: 5rem;
+  }
+  & .cell.cell-level-0 {
+    @extend .bg-light;
+  }
+  & .myNodeClass > .cell {
+  }
+  & .mySelectedNodeClass > .cell {
+    @extend .border-primary;
+  }
+  & .ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
