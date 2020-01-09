@@ -35,53 +35,50 @@
 /* global google */
 import ScrollBooster from 'scrollbooster'
 import template from '~/assets/multisigAccountTemplate.ejs'
+import convert from '~/assets/nem2-library/convert.js'
+import base32 from '~/assets/nem2-library/base32.js'
 
 export default {
   components: {},
   data() {
     return {
       graph: [],
-      inputAccount: '',
+      inputAccount: 'TCQPNIWEPQLTXDCDNWQ4UO7HZKQSPTZNWKZSFTE7',
       ready: false,
       errorMessage: '',
       scrollBooster: null,
-      selectedElement: null
+      selectedElementIndex: null
     }
   },
   computed: {
-    chartData() {
-      return this.graph
-        .map((level) => {
-          return level.multisigEntries
-            .map((entry) => {
-              if (entry.multisig.multisigPublicKeys.length === 0) {
-                return [
-                  [
-                    {
-                      v: entry.multisig.accountPublicKey,
-                      f: template({ entry, level: level.level })
-                    },
-                    '',
-                    entry.multisig.accountAddress
-                  ]
-                ]
-              }
-              return entry.multisig.multisigPublicKeys.map(
-                (multisigPublicKey) => {
-                  return [
-                    {
-                      v: entry.multisig.accountPublicKey,
-                      f: template({ entry, level: level.level })
-                    },
-                    multisigPublicKey,
-                    entry.multisig.accountAddress
-                  ]
-                }
-              )
-            })
-            .flat()
+    accountData() {
+      const accounts = []
+      // 小さいレベルから開始
+      const rootLevel = this.graph[0].level
+      for (const root of this.graph[0].multisigEntries) {
+        const rootKey =
+          Math.random()
+            .toString(32)
+            .substring(2) +
+          '-' +
+          root.multisig.accountPublicKey
+        accounts.push({
+          level: rootLevel,
+          key: rootKey,
+          parent: null,
+          ...addEncodedAddress(root.multisig)
         })
-        .flat()
+        root.multisig.cosignatoryPublicKeys.map((cosignatoryPublicKey) => {
+          findChildRecursive(
+            cosignatoryPublicKey,
+            rootLevel + 1,
+            rootKey,
+            accounts,
+            this.graph
+          )
+        })
+      }
+      return accounts
     }
   },
   mounted() {
@@ -98,6 +95,8 @@ export default {
       const account = this.inputAccount.replace(/-/g, '').replace(/^0x/, '')
       this.getGraph(account)
         .then((graph) => {
+          const level0GraphIndex = graph.findIndex((g) => g.level === 0)
+          graph[level0GraphIndex].multisigEntries[0].multisig.isSelf = true
           this.graph = graph
         })
         .catch((e) => {
@@ -105,7 +104,7 @@ export default {
         })
         .finally(() => {
           this.$nextTick(() => {
-            const chartData = this.chartData
+            const chartData = generateChatData(this.accountData)
             const chartElement = this.$refs.chart_div
             this.drawGraph(chartData, chartElement)
             // this.updateScrollBooster()
@@ -127,9 +126,9 @@ export default {
       chart.draw(data, chartOptions)
       google.visualization.events.addListener(chart, 'select', () => {
         if (chart.getSelection().length > 0) {
-          this.selectedElement = chartData[chart.getSelection()[0].row]
+          this.selectedElementIndex = chart.getSelection()[0].row
         } else {
-          this.selectedElement = null
+          this.selectedElementIndex = null
         }
       })
     },
@@ -137,6 +136,9 @@ export default {
       // TADB6HFQDX7R5YBY5FNVWXAICG7I23A2JNIPOIX6
       // TCQPNIWEPQLTXDCDNWQ4UO7HZKQSPTZNWKZSFTE7
       // 0659175E1E9AB0F768EC796E6ED0954EEBC6AD3681BAE5211BE3FFA4DB4DC546
+      // 2716AF99DA032C5EC5374973780A2371E9402459475AD665DA74DBD7EC641A5C
+      // F3F282AC74FDECFB2C397D29D9A4C2CF938F228299B8B79E7521271B5A06F74D
+      // 32DBF3536FBFDD65E862734EE56EAD919AB966F61061699BB0C601052DE4A900
       const url = `https://test-api.48gh23s.xyz:3001/account/${account}/multisig/graph`
       return this.$axios.$get(url)
     },
@@ -159,5 +161,74 @@ export default {
       })
     }
   }
+}
+
+function addEncodedAddress(multisig) {
+  multisig.accountAddressPlain = multisig.accountAddress
+    ? base32.encode(convert.hexToUint8(multisig.accountAddress))
+    : null
+  return multisig
+}
+
+function generateChatData(accountData) {
+  console.log(accountData)
+  return accountData.map((account) => {
+    return [
+      {
+        v: account.key,
+        f: template({ account })
+      },
+      account.parent,
+      null
+    ]
+  })
+}
+
+function findChildRecursive(
+  publicKey,
+  level,
+  parentKey,
+  accumulator,
+  originalGraph
+) {
+  const levelGraph = originalGraph.find((g) => g.level === level)
+  if (levelGraph === undefined) {
+    // レベルが見つからなかった場合はなにもしない
+    return
+  }
+  const accountKey =
+    Math.random()
+      .toString(32)
+      .substring(2) +
+    '-' +
+    publicKey
+  const multisigEntry = levelGraph.multisigEntries.find(
+    (multisigEntry) => multisigEntry.multisig.accountPublicKey === publicKey
+  )
+  if (multisigEntry === undefined) {
+    // 公開鍵からエントリーが見つからなかった場合は公開鍵だけを登録
+    accumulator.push({
+      level,
+      key: accountKey,
+      parent: parentKey,
+      accountPublicKey: publicKey
+    })
+    return
+  }
+  accumulator.push({
+    level,
+    key: accountKey,
+    parent: parentKey,
+    ...addEncodedAddress(multisigEntry.multisig)
+  })
+  multisigEntry.multisig.cosignatoryPublicKeys.map((cosignatoryPublicKey) => {
+    findChildRecursive(
+      cosignatoryPublicKey,
+      level + 1,
+      accountKey,
+      accumulator,
+      originalGraph
+    )
+  })
 }
 </script>

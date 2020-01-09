@@ -19,9 +19,9 @@ $dark: #804A66;
     @extend .card;
     text-align: center;
     position: relative;
-    width: 5rem;
+    width: 8rem;
   }
-  & .cell.cell-level-0 {
+  & .cell.self {
     @extend .bg-light;
   }
   & .myNodeClass > .cell {

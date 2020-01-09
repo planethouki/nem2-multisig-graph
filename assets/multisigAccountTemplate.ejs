@@ -1,13 +1,17 @@
-<div class="cell cell-level-<%= level %>">
-  <div class="ellipsis">
-    <%= entry.multisig.accountPublicKey %>
-  </div>
-  <div class="ellipsis">
-    <%= entry.multisig.accountAddress %>
-  </div>
-  <% if (entry.multisig.cosignatoryPublicKeys.length > 0) { %>
+<div class="<%= account.isSelf ? 'cell self' : 'cell' %>">
+  <% if (account.accountAddressPlain) { %>
+    <div class="text-break">
+      <%= account.accountAddressPlain %>
+    </div>
+  <% } %>
+  <% if (account.accountPublicKey) { %>
+    <div class="ellipsis d-none">
+      <%= account.accountPublicKey %>
+    </div>
+  <% } %>
+  <% if (account.cosignatoryPublicKeys && account.cosignatoryPublicKeys.length > 0) { %>
     <div>
-      <%= entry.multisig.minApproval %> of <%= entry.multisig.cosignatoryPublicKeys.length %>
+      <%= account.minApproval %> of <%= account.cosignatoryPublicKeys.length %> multisig
     </div>
   <% } %>
 </div>
