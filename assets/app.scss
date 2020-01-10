@@ -36,3 +36,14 @@ $dark: #804A66;
   }
 }
 
+.list-group-dl {
+  @extend .mx-auto, .small, .mb-3;
+  max-width: 45rem;
+  li.list-group-item {
+    @extend .d-flex, .justify-content-between, .align-items-center, .py-1;
+    .title {}
+    .text {
+      font-family: 'Courier New', monospace;
+    }
+  }
+}

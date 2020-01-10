@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar navbar-light bg-light justify-content-between">
+    <nav class="navbar navbar-light bg-light">
       <span class="navbar-brand">nem2 multisig graph</span>
       <form class="form-inline">
         <input
@@ -27,6 +27,87 @@
       <div v-if="errorMessage" class="alert alert-warning my-5" role="alert">
         {{ errorMessage }}
       </div>
+      <div v-if="selectedElementIndex !== null">
+        <ul class="list-group list-group-dl">
+          <li class="list-group-item">
+            <span class="title">PublicKey</span>
+            <span class="text">
+              {{ accountData[selectedElementIndex].accountPublicKey }}
+            </span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Address</span>
+            <span class="text">
+              {{ accountData[selectedElementIndex].accountAddressPlain }}
+            </span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Min Removal</span>
+            <span class="text">
+              {{ accountData[selectedElementIndex].minRemoval }}
+            </span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Min Approval</span>
+            <span class="text">
+              {{ accountData[selectedElementIndex].minApproval }}
+            </span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Cosignatory PublicKey</span>
+            <span class="text">
+              <template
+                v-if="
+                  accountData[selectedElementIndex].cosignatoryPublicKeys.length
+                "
+              >
+                <span
+                  v-for="p in accountData[selectedElementIndex]
+                    .cosignatoryPublicKeys"
+                  :key="p"
+                  class="d-block"
+                >
+                  {{ p }}
+                </span>
+              </template>
+              <template v-else>
+                -
+              </template>
+            </span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Multisig PublicKey</span>
+            <span class="text">
+              <template
+                v-if="
+                  accountData[selectedElementIndex].multisigPublicKeys.length
+                "
+              >
+                <span
+                  v-for="p in accountData[selectedElementIndex]
+                    .multisigPublicKeys"
+                  :key="p"
+                  class="d-block"
+                >
+                  {{ p }}
+                </span>
+              </template>
+              <template v-else>
+                -
+              </template>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navbar navbar-light bg-light">
+      <a
+        href="https://github.com/planethouki/nem2-multisig-graph"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img src="~/assets/GitHub-Mark-Light-32px.png" />
+      </a>
     </div>
   </div>
 </template>
@@ -78,12 +159,10 @@ export default {
           this.errorMessage = e.message
         })
         .finally(() => {
-          this.$nextTick(() => {
-            const chartData = generateChatData(this.accountData, selfPublicKey)
-            const chartElement = this.$refs.chart_div
-            this.drawGraph(chartData, chartElement)
-            // this.updateScrollBooster()
-          })
+          const chartData = generateChatData(this.accountData, selfPublicKey)
+          const chartElement = this.$refs.chart_div
+          this.drawGraph(chartData, chartElement)
+          // this.updateScrollBooster()
         })
     },
     drawGraph(chartData, chartElement) {

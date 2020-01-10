@@ -1,13 +1,10 @@
 <div class="<%= account.accountPublicKey === selfPublicKey ? 'cell self' : 'cell' %>">
-  <% if (account.accountAddressPlain) { %>
-    <div class="text-break">
-      <%= account.accountAddressPlain %>
+    <div class="text-break" title="address">
+        <%= account.accountAddressPlain %>
     </div>
-  <% } else if (account.accountPublicKey) {%>
-    <div class="ellipsis">
-      <%= account.accountPublicKey %>
+    <div class="ellipsis" title="public key">
+        <%= account.accountPublicKey %>
     </div>
-  <% } %>
   <% if (account.cosignatoryPublicKeys && account.cosignatoryPublicKeys.length > 0) { %>
     <div>
       <%= account.minApproval %> of <%= account.cosignatoryPublicKeys.length %> multisig
