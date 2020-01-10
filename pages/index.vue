@@ -34,6 +34,7 @@
 <script>
 /* global google */
 import ScrollBooster from 'scrollbooster'
+import axios from 'axios'
 import template from '~/assets/multisigAccountTemplate.ejs'
 import convert from '~/assets/nem2-library/convert.js'
 import base32 from '~/assets/nem2-library/base32.js'
@@ -42,43 +43,12 @@ export default {
   components: {},
   data() {
     return {
-      graph: [],
-      inputAccount: 'TCQPNIWEPQLTXDCDNWQ4UO7HZKQSPTZNWKZSFTE7',
+      accountData: [],
+      inputAccount: 'TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E',
       ready: false,
       errorMessage: '',
       scrollBooster: null,
       selectedElementIndex: null
-    }
-  },
-  computed: {
-    accountData() {
-      const accounts = []
-      // 小さいレベルから開始
-      const rootLevel = this.graph[0].level
-      for (const root of this.graph[0].multisigEntries) {
-        const rootKey =
-          Math.random()
-            .toString(32)
-            .substring(2) +
-          '-' +
-          root.multisig.accountPublicKey
-        accounts.push({
-          level: rootLevel,
-          key: rootKey,
-          parent: null,
-          ...addEncodedAddress(root.multisig)
-        })
-        root.multisig.cosignatoryPublicKeys.map((cosignatoryPublicKey) => {
-          findChildRecursive(
-            cosignatoryPublicKey,
-            rootLevel + 1,
-            rootKey,
-            accounts,
-            this.graph
-          )
-        })
-      }
-      return accounts
     }
   },
   mounted() {
@@ -90,21 +60,26 @@ export default {
   methods: {
     clickHandler() {
       this.errorMessage = ''
-      this.graph = []
+      this.accountData = []
       // this.clearScrollBooster()
       const account = this.inputAccount.replace(/-/g, '').replace(/^0x/, '')
+      let selfPublicKey
       this.getGraph(account)
         .then((graph) => {
           const level0GraphIndex = graph.findIndex((g) => g.level === 0)
-          graph[level0GraphIndex].multisigEntries[0].multisig.isSelf = true
-          this.graph = graph
+          selfPublicKey =
+            graph[level0GraphIndex].multisigEntries[0].multisig.accountPublicKey
+          return generateAccountData(graph)
+        })
+        .then((accountData) => {
+          this.accountData = accountData
         })
         .catch((e) => {
           this.errorMessage = e.message
         })
         .finally(() => {
           this.$nextTick(() => {
-            const chartData = generateChatData(this.accountData)
+            const chartData = generateChatData(this.accountData, selfPublicKey)
             const chartElement = this.$refs.chart_div
             this.drawGraph(chartData, chartElement)
             // this.updateScrollBooster()
@@ -139,6 +114,7 @@ export default {
       // 2716AF99DA032C5EC5374973780A2371E9402459475AD665DA74DBD7EC641A5C
       // F3F282AC74FDECFB2C397D29D9A4C2CF938F228299B8B79E7521271B5A06F74D
       // 32DBF3536FBFDD65E862734EE56EAD919AB966F61061699BB0C601052DE4A900
+      // TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E
       const url = `https://test-api.48gh23s.xyz:3001/account/${account}/multisig/graph`
       return this.$axios.$get(url)
     },
@@ -170,13 +146,12 @@ function addEncodedAddress(multisig) {
   return multisig
 }
 
-function generateChatData(accountData) {
-  console.log(accountData)
+function generateChatData(accountData, selfPublicKey) {
   return accountData.map((account) => {
     return [
       {
         v: account.key,
-        f: template({ account })
+        f: template({ account, selfPublicKey })
       },
       account.parent,
       null
@@ -184,7 +159,38 @@ function generateChatData(accountData) {
   })
 }
 
-function findChildRecursive(
+async function generateAccountData(graph) {
+  if (graph.length === 0) return []
+  const accounts = []
+  // 小さいレベルから開始
+  const rootLevel = graph[0].level
+  for (const root of graph[0].multisigEntries) {
+    const rootKey =
+      Math.random()
+        .toString(32)
+        .substring(2) +
+      '-' +
+      root.multisig.accountPublicKey
+    accounts.push({
+      level: rootLevel,
+      key: rootKey,
+      parent: null,
+      ...addEncodedAddress(root.multisig)
+    })
+    for (const cosignatoryPublicKey of root.multisig.cosignatoryPublicKeys) {
+      await findChildRecursive(
+        cosignatoryPublicKey,
+        rootLevel + 1,
+        rootKey,
+        accounts,
+        graph
+      )
+    }
+  }
+  return accounts
+}
+
+async function findChildRecursive(
   publicKey,
   level,
   parentKey,
@@ -202,18 +208,14 @@ function findChildRecursive(
       .substring(2) +
     '-' +
     publicKey
-  const multisigEntry = levelGraph.multisigEntries.find(
+  let multisigEntry = levelGraph.multisigEntries.find(
     (multisigEntry) => multisigEntry.multisig.accountPublicKey === publicKey
   )
   if (multisigEntry === undefined) {
-    // 公開鍵からエントリーが見つからなかった場合は公開鍵だけを登録
-    accumulator.push({
-      level,
-      key: accountKey,
-      parent: parentKey,
-      accountPublicKey: publicKey
-    })
-    return
+    // 公開鍵からエントリーが見つからなかった場合は新規取得
+    const url = `https://test-api.48gh23s.xyz:3001/account/${publicKey}/multisig`
+    const multisigRes = await axios.get(url)
+    multisigEntry = multisigRes.data
   }
   accumulator.push({
     level,
@@ -221,14 +223,15 @@ function findChildRecursive(
     parent: parentKey,
     ...addEncodedAddress(multisigEntry.multisig)
   })
-  multisigEntry.multisig.cosignatoryPublicKeys.map((cosignatoryPublicKey) => {
-    findChildRecursive(
+  for (const cosignatoryPublicKey of multisigEntry.multisig
+    .cosignatoryPublicKeys) {
+    await findChildRecursive(
       cosignatoryPublicKey,
       level + 1,
       accountKey,
       accumulator,
       originalGraph
     )
-  })
+  }
 }
 </script>

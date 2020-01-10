@@ -1,11 +1,10 @@
-<div class="<%= account.isSelf ? 'cell self' : 'cell' %>">
+<div class="<%= account.accountPublicKey === selfPublicKey ? 'cell self' : 'cell' %>">
   <% if (account.accountAddressPlain) { %>
     <div class="text-break">
       <%= account.accountAddressPlain %>
     </div>
-  <% } %>
-  <% if (account.accountPublicKey) { %>
-    <div class="ellipsis d-none">
+  <% } else if (account.accountPublicKey) {%>
+    <div class="ellipsis">
       <%= account.accountPublicKey %>
     </div>
   <% } %>
