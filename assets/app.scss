@@ -37,7 +37,7 @@ $dark: #804A66;
 }
 
 .list-group-dl {
-  @extend .mx-auto, .small, .mb-3;
+  @extend .mx-auto, .small, .my-3;
   max-width: 45rem;
   min-height: 15rem;
   li.list-group-item {
