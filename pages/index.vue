@@ -247,7 +247,7 @@ export default {
       // F3F282AC74FDECFB2C397D29D9A4C2CF938F228299B8B79E7521271B5A06F74D
       // 32DBF3536FBFDD65E862734EE56EAD919AB966F61061699BB0C601052DE4A900
       // TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E
-      const url = `https://test-api.48gh23s.xyz:3001/account/${account}/multisig/graph`
+      const url = `${process.env.REST}/account/${account}/multisig/graph`
       return this.$axios.$get(url)
     },
     clearScrollBooster() {
@@ -345,7 +345,7 @@ async function findChildRecursive(
   )
   if (multisigEntry === undefined) {
     // 公開鍵からエントリーが見つからなかった場合は新規取得
-    const url = `https://test-api.48gh23s.xyz:3001/account/${publicKey}/multisig`
+    const url = `${process.env.REST}/account/${publicKey}/multisig`
     const multisigRes = await axios.get(url)
     multisigEntry = multisigRes.data
   }

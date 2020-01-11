@@ -75,5 +75,8 @@ export default {
   },
   router: {
     base: '/multisig-graph/'
+  },
+  env: {
+    REST: 'https://test-api.48gh23s.xyz:3001'
   }
 }
