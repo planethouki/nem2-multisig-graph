@@ -192,6 +192,7 @@ export default {
     },
     clickHandler() {
       this.errorMessage = ''
+      this.selectedElementIndex = null
       this.accountData = []
       this.clearScrollBooster()
       const account = this.inputAccount.replace(/-/g, '').replace(/^0x/, '')
