@@ -1,6 +1,6 @@
 # nem2-multisig-graph
 
-> nem2 multisig graph web ui
+![image](https://user-images.githubusercontent.com/26595148/72197624-b8cd6b00-3466-11ea-9521-ab485523dbd9.png)
 
 ## live demo
 
