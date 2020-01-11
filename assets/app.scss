@@ -14,7 +14,7 @@ $dark: #804A66;
 #chart_div {
   overflow-y: hidden;
   overflow-x: auto;
-  //cursor: all-scroll;
+  cursor: all-scroll;
   .cell {
     @extend .card;
     text-align: center;

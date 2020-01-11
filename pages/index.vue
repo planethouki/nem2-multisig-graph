@@ -193,7 +193,7 @@ export default {
     clickHandler() {
       this.errorMessage = ''
       this.accountData = []
-      // this.clearScrollBooster()
+      this.clearScrollBooster()
       const account = this.inputAccount.replace(/-/g, '').replace(/^0x/, '')
       let selfPublicKey
       return this.getGraph(account)
@@ -213,7 +213,7 @@ export default {
           const chartData = generateChatData(this.accountData, selfPublicKey)
           const chartElement = this.$refs.chart_div
           this.drawGraph(chartData, chartElement)
-          // this.updateScrollBooster()
+          this.updateScrollBooster()
           this.tried = true
         })
     },
