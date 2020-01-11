@@ -187,9 +187,7 @@ export default {
     tryAnyway() {
       this.inputAccount = 'TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E'
       this.$nextTick(() => {
-        this.clickHandler().then(() => {
-          this.tried = true
-        })
+        this.clickHandler()
       })
     },
     clickHandler() {
@@ -216,6 +214,7 @@ export default {
           const chartElement = this.$refs.chart_div
           this.drawGraph(chartData, chartElement)
           // this.updateScrollBooster()
+          this.tried = true
         })
     },
     drawGraph(chartData, chartElement) {
