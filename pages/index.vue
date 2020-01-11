@@ -1,33 +1,77 @@
 <template>
   <div>
     <nav class="navbar navbar-light bg-light">
-      <span class="navbar-brand">nem2 multisig graph</span>
-      <form class="form-inline">
+      <span class="navbar-brand text-dark">
+        nem2 multisig graph
+      </span>
+      <div class="form-inline">
         <input
           v-model="inputAccount"
-          type="search"
+          type="text"
           class="form-control mr-sm-2"
           aria-label="Search"
           placeholder="Address, PublicKey"
         />
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn btn-primary text-dark"
           :disabled="!ready"
           @click="clickHandler"
         >
           Search
         </button>
-      </form>
+      </div>
     </nav>
+    <div v-if="!tried" class="jumbotron bg-white">
+      <h1 class="display-4">Multisig Graph</h1>
+      <p class="lead">
+        マルチシグの構成を図で表します。
+      </p>
+      <hr class="my-4" />
+      <button
+        class="btn btn-primary btn-lg"
+        type="button"
+        :disabled="!ready"
+        @click="tryAnyway"
+      >
+        Try Anyway
+      </button>
+    </div>
     <div class="container-fluid">
       <div id="chart_div" ref="chart_div"></div>
-    </div>
-    <div class="container">
       <div v-if="errorMessage" class="alert alert-warning my-5" role="alert">
         {{ errorMessage }}
       </div>
-      <div v-if="selectedElementIndex !== null">
+      <div v-if="!tried"></div>
+      <div v-else-if="selectedElementIndex === null">
+        <ul class="list-group list-group-dl">
+          <li class="list-group-item">
+            <span class="title">PublicKey</span>
+            <span class="text">-</span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Address</span>
+            <span class="text">-</span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Min Removal</span>
+            <span class="text">-</span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Min Approval</span>
+            <span class="text">-</span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Cosignatory PublicKey</span>
+            <span class="text">-</span>
+          </li>
+          <li class="list-group-item">
+            <span class="title">Multisig PublicKey</span>
+            <span class="text">-</span>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
         <ul class="list-group list-group-dl">
           <li class="list-group-item">
             <span class="title">PublicKey</span>
@@ -125,11 +169,12 @@ export default {
   data() {
     return {
       accountData: [],
-      inputAccount: 'TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E',
+      inputAccount: '',
       ready: false,
       errorMessage: '',
       scrollBooster: null,
-      selectedElementIndex: null
+      selectedElementIndex: null,
+      tried: false
     }
   },
   mounted() {
@@ -139,13 +184,21 @@ export default {
     })
   },
   methods: {
+    tryAnyway() {
+      this.inputAccount = 'TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E'
+      this.$nextTick(() => {
+        this.clickHandler().then(() => {
+          this.tried = true
+        })
+      })
+    },
     clickHandler() {
       this.errorMessage = ''
       this.accountData = []
       // this.clearScrollBooster()
       const account = this.inputAccount.replace(/-/g, '').replace(/^0x/, '')
       let selfPublicKey
-      this.getGraph(account)
+      return this.getGraph(account)
         .then((graph) => {
           const level0GraphIndex = graph.findIndex((g) => g.level === 0)
           selfPublicKey =
