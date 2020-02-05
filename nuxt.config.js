@@ -20,12 +20,12 @@ export default {
         type: 'text/javascript'
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }]
   },
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#FF94CB' },
   /*
    ** Global CSS
    */
@@ -78,5 +78,6 @@ export default {
   },
   env: {
     REST: 'https://test-api.48gh23s.xyz:3001'
-  }
+  },
+  srcDir: 'src/'
 }

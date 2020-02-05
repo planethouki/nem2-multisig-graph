@@ -185,7 +185,7 @@ export default {
   },
   methods: {
     tryAnyway() {
-      this.inputAccount = 'TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E'
+      this.inputAccount = 'TDOGRYNLJ4LFJAECPX62NW6SKZITP2KCHQIXBXBJ'
       this.$nextTick(() => {
         this.clickHandler()
       })
