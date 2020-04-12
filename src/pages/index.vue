@@ -1,7 +1,7 @@
 <template>
   <div>
-    <nav class="navbar navbar-light bg-light">
-      <span class="navbar-brand text-dark">
+    <nav class="navbar navbar-light navbar-dark bg-dark">
+      <span class="navbar-brand">
         nem2 multisig graph
       </span>
       <div class="form-inline">
@@ -14,7 +14,7 @@
         />
         <button
           type="button"
-          class="btn btn-primary text-dark"
+          class="btn btn-secondary"
           :disabled="!ready"
           @click="clickHandler"
         >
@@ -144,7 +144,7 @@
         </ul>
       </div>
     </div>
-    <div class="navbar navbar-light bg-light">
+    <div class="navbar navbar-dark bg-primary">
       <a
         href="https://github.com/planethouki/nem2-multisig-graph"
         target="_blank"
