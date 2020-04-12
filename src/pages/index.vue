@@ -174,7 +174,7 @@ export default {
       errorMessage: '',
       scrollBooster: null,
       selectedElementIndex: null,
-      tried: false
+      tried: false,
     }
   },
   mounted() {
@@ -222,7 +222,7 @@ export default {
       const chartOptions = {
         allowHtml: true,
         nodeClass: 'myNodeClass',
-        selectedNodeClass: 'mySelectedNodeClass'
+        selectedNodeClass: 'mySelectedNodeClass',
       }
       const data = new google.visualization.DataTable()
       data.addColumn('string', 'Account')
@@ -240,13 +240,6 @@ export default {
       })
     },
     getGraph(account) {
-      // TADB6HFQDX7R5YBY5FNVWXAICG7I23A2JNIPOIX6
-      // TCQPNIWEPQLTXDCDNWQ4UO7HZKQSPTZNWKZSFTE7
-      // 0659175E1E9AB0F768EC796E6ED0954EEBC6AD3681BAE5211BE3FFA4DB4DC546
-      // 2716AF99DA032C5EC5374973780A2371E9402459475AD665DA74DBD7EC641A5C
-      // F3F282AC74FDECFB2C397D29D9A4C2CF938F228299B8B79E7521271B5A06F74D
-      // 32DBF3536FBFDD65E862734EE56EAD919AB966F61061699BB0C601052DE4A900
-      // TDZ54ZWJNXHFEDUAB2NNGAAFVCO4TA36N2KKUN4E
       const url = `${process.env.REST}/account/${account}/multisig/graph`
       return this.$axios.$get(url)
     },
@@ -265,10 +258,10 @@ export default {
         mode: 'x',
         onUpdate: (data) => {
           viewport.scrollLeft = data.position.x
-        }
+        },
       })
-    }
-  }
+    },
+  },
 }
 
 function addEncodedAddress(multisig) {
@@ -283,10 +276,10 @@ function generateChatData(accountData, selfPublicKey) {
     return [
       {
         v: account.key,
-        f: template({ account, selfPublicKey })
+        f: template({ account, selfPublicKey }),
       },
       account.parent,
-      null
+      null,
     ]
   })
 }
@@ -298,16 +291,14 @@ async function generateAccountData(graph) {
   const rootLevel = graph[0].level
   for (const root of graph[0].multisigEntries) {
     const rootKey =
-      Math.random()
-        .toString(32)
-        .substring(2) +
+      Math.random().toString(32).substring(2) +
       '-' +
       root.multisig.accountPublicKey
     accounts.push({
       level: rootLevel,
       key: rootKey,
       parent: null,
-      ...addEncodedAddress(root.multisig)
+      ...addEncodedAddress(root.multisig),
     })
     for (const cosignatoryPublicKey of root.multisig.cosignatoryPublicKeys) {
       await findChildRecursive(
@@ -334,12 +325,7 @@ async function findChildRecursive(
     // レベルが見つからなかった場合はなにもしない
     return
   }
-  const accountKey =
-    Math.random()
-      .toString(32)
-      .substring(2) +
-    '-' +
-    publicKey
+  const accountKey = Math.random().toString(32).substring(2) + '-' + publicKey
   let multisigEntry = levelGraph.multisigEntries.find(
     (multisigEntry) => multisigEntry.multisig.accountPublicKey === publicKey
   )
@@ -353,7 +339,7 @@ async function findChildRecursive(
     level,
     key: accountKey,
     parent: parentKey,
-    ...addEncodedAddress(multisigEntry.multisig)
+    ...addEncodedAddress(multisigEntry.multisig),
   })
   for (const cosignatoryPublicKey of multisigEntry.multisig
     .cosignatoryPublicKeys) {
