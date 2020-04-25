@@ -77,7 +77,7 @@ export default {
     base: '/multisig-graph/'
   },
   env: {
-    REST: 'https://test-api.48gh23s.xyz:3001'
+    REST: 'https://pentesting1-api.48gh23s.xyz:3001'
   },
   srcDir: 'src/'
 }
