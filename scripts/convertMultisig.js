@@ -27,8 +27,8 @@ Alice
 
 const networkType = NetworkType.TEST_NET
 const generationHash =
-  '44D2225B8932C9A96DCB13508CBCDFFA9A9663BFBA2354FEEC8FCFCB7E19846C'
-const url = 'https://pentesting1-api.48gh23s.xyz:3001'
+  'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
+const url = 'https://pentesting2-api.48gh23s.xyz:3001'
 const initiator = Account.createFromPrivateKey(
   '25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E',
   networkType
@@ -52,7 +52,7 @@ const accounts = [alice, bob, carol, dave, ellen, frank, steve, trent]
 const dummyTx = TransferTransaction.create(
   Deadline.create(),
   initiator.address,
-  [new Mosaic(new MosaicId('747B276C30626442'), UInt64.fromUint(0))],
+  [new Mosaic(new MosaicId('519FC24B9223E0B4'), UInt64.fromUint(0))],
   PlainMessage.create(''),
   networkType
 )
