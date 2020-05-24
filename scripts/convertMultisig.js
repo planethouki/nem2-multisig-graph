@@ -27,12 +27,14 @@ Alice
 
 const networkType = NetworkType.TEST_NET
 const generationHash =
-  'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
-const url = 'https://pentesting2-api.48gh23s.xyz:3001'
+  '4009619EB7A9F824C5D0EE0E164E0F99CCD7906A475D7768FD60B452204BD0A2'
+const mosaicId = '05D6A80DE3C9ADCA'
+const url = 'https://gorilla-api.48gh23s.xyz:3001'
 const initiator = Account.createFromPrivateKey(
   '25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E',
   networkType
 )
+// TCZ5KXKSAJA74A5ECZCXMHOHKFVQ36YSONW4RSHA
 
 // const alice = Account.createFromPrivateKey(
 //   'F220F14DE5044A0C03E04767E10AE03128969708E49CAB42BC974D464EFA09C1',
@@ -52,7 +54,7 @@ const accounts = [alice, bob, carol, dave, ellen, frank, steve, trent]
 const dummyTx = TransferTransaction.create(
   Deadline.create(),
   initiator.address,
-  [new Mosaic(new MosaicId('519FC24B9223E0B4'), UInt64.fromUint(0))],
+  [new Mosaic(new MosaicId(mosaicId), UInt64.fromUint(0))],
   PlainMessage.create(''),
   networkType
 )
