@@ -16,6 +16,7 @@
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.19.0",
     "bootswatch": "^4.5.3",
+    "dotenv": "^8.2.0",
     "nuxt": "^2.14.7",
     "scrollbooster": "^2.3.0"
   },

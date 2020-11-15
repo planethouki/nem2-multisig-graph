@@ -1,4 +1,8 @@
 /* eslint-disable no-console */
+const path = require('path')
+require('dotenv').config({
+  path: path.join(__dirname, '.env'),
+})
 const {
   Account,
   AggregateTransaction,
@@ -8,7 +12,7 @@ const {
   MultisigAccountModificationTransaction,
   NetworkType,
   PlainMessage,
-  TransactionHttp,
+  RepositoryFactoryHttp,
   TransferTransaction,
   UInt64,
 } = require('symbol-sdk')
@@ -27,19 +31,24 @@ Alice
 
 const networkType = NetworkType.TEST_NET
 const generationHash =
-  '4009619EB7A9F824C5D0EE0E164E0F99CCD7906A475D7768FD60B452204BD0A2'
-const mosaicId = '05D6A80DE3C9ADCA'
-const url = 'https://gorilla-api.48gh23s.xyz:3001'
+  '6C1B92391CCB41C96478471C2634C111D9E989DECD66130C0430B5B8D20117CD'
+const mosaicId = '5B66E76BECAD0860'
+
+const nodeList = [
+  'http://api-01.ap-northeast-1.0.10.0.x.symboldev.network:3000',
+  'http://api-01.ap-southeast-1.0.10.0.x.symboldev.network:3000',
+  'http://api-01.eu-central-1.0.10.0.x.symboldev.network:3000',
+  'http://api-01.eu-west-1.0.10.0.x.symboldev.network:3000',
+  'http://api-01.us-east-1.0.10.0.x.symboldev.network:3000',
+  'http://api-01.us-west-1.0.10.0.x.symboldev.network:3000',
+]
+
+const url = nodeList[2]
 const initiator = Account.createFromPrivateKey(
-  '25B3F54217340F7061D02676C4B928ADB4395EB70A2A52D2A11E2F4AE011B03E',
+  process.env.PRIVATE_KEY,
   networkType
 )
-// TCZ5KXKSAJA74A5ECZCXMHOHKFVQ36YSONW4RSHA
 
-// const alice = Account.createFromPrivateKey(
-//   'F220F14DE5044A0C03E04767E10AE03128969708E49CAB42BC974D464EFA09C1',
-//   networkType
-// )
 const alice = Account.generateNewAccount(networkType)
 const bob = Account.generateNewAccount(networkType)
 const carol = Account.generateNewAccount(networkType)
@@ -63,7 +72,7 @@ const steveConvertTx = MultisigAccountModificationTransaction.create(
   Deadline.create(),
   2,
   2,
-  [trent, dave].map((co) => co.publicAccount),
+  [trent, dave].map((co) => co.address),
   [],
   networkType
 )
@@ -71,7 +80,7 @@ const ellenConvertTx = MultisigAccountModificationTransaction.create(
   Deadline.create(),
   2,
   2,
-  [frank, steve].map((co) => co.publicAccount),
+  [frank, steve].map((co) => co.address),
   [],
   networkType
 )
@@ -79,7 +88,7 @@ const bobConvertTx = MultisigAccountModificationTransaction.create(
   Deadline.create(),
   2,
   2,
-  [carol, dave].map((co) => co.publicAccount),
+  [carol, dave].map((co) => co.address),
   [],
   networkType
 )
@@ -87,7 +96,7 @@ const aliceConvertTx = MultisigAccountModificationTransaction.create(
   Deadline.create(),
   2,
   2,
-  [bob, ellen].map((co) => co.publicAccount),
+  [bob, ellen].map((co) => co.address),
   [],
   networkType
 )
@@ -110,7 +119,10 @@ const aggregateSignedTx = initiator.signTransactionWithCosignatories(
   generationHash
 )
 
-const transactionHttp = new TransactionHttp(url)
+const repositoryFactory = new RepositoryFactoryHttp(url)
+const transactionHttp = repositoryFactory.createTransactionRepository()
+const transactionStatusHttp = repositoryFactory.createTransactionStatusRepository()
+
 transactionHttp
   .announce(aggregateSignedTx)
   .toPromise()
@@ -118,7 +130,7 @@ transactionHttp
     return new Promise((resolve) => setTimeout(resolve, 30000))
   })
   .then(() => {
-    return transactionHttp
+    return transactionStatusHttp
       .getTransactionStatus(aggregateSignedTx.hash)
       .toPromise()
   })
