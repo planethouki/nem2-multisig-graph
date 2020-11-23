@@ -1,9 +1,7 @@
 <template>
   <div>
     <b-navbar type="dark" variant="secondary" class="justify-content-between">
-      <b-navbar-brand to="/">
-        nem2 multisig graph
-      </b-navbar-brand>
+      <b-navbar-brand to="/"> nem2 multisig graph </b-navbar-brand>
       <div class="form-inline">
         <input
           v-model="inputAccount"

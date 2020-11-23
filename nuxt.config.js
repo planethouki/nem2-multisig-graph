@@ -11,16 +11,16 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: process.env.npm_package_description || ''
-      }
+        content: process.env.npm_package_description || '',
+      },
     ],
     script: [
       {
         src: 'https://www.gstatic.com/charts/loader.js',
-        type: 'text/javascript'
-      }
+        type: 'text/javascript',
+      },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
   },
   /*
    ** Customize the progress-bar color
@@ -33,13 +33,13 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: [{ src: '~/plugins/graphUtil.js', model: 'client' }],
   /*
    ** Nuxt.js dev-modules
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
   ],
   /*
    ** Nuxt.js modules
@@ -48,7 +48,7 @@ export default {
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
   ],
   /*
    ** Axios module configuration
@@ -65,19 +65,20 @@ export default {
     extend(config, ctx) {
       config.module.rules.push({
         test: /\.ejs$/,
-        loader: 'ejs-loader'
+        loader: 'ejs-loader',
       })
-    }
+    },
   },
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
-    bootstrapVueCSS: false // Or `bvCSS: false`
+    bootstrapVueCSS: false, // Or `bvCSS: false`
   },
   router: {
-    base: '/multisig-graph/'
+    base: '/multisig-graph/',
   },
   env: {
-    REST: 'https://gorilla-api.48gh23s.xyz:3001'
+    REST: 'https://d2o8j5pgb7wqnq.cloudfront.net',
+    REF_ADDRESS: 'TCIQ6MSROK4NQZYYZPP7GFIQXADXZTKSUZUCPQI',
   },
-  srcDir: 'src/'
+  srcDir: 'src/',
 }

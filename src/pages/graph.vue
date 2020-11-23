@@ -8,10 +8,6 @@
     <div v-else-if="selectedElementIndex === null">
       <ul class="list-group list-group-dl">
         <li class="list-group-item">
-          <span class="title">PublicKey</span>
-          <span class="text">-</span>
-        </li>
-        <li class="list-group-item">
           <span class="title">Address</span>
           <span class="text">-</span>
         </li>
@@ -36,12 +32,6 @@
     <div v-else>
       <ul class="list-group list-group-dl">
         <li class="list-group-item">
-          <span class="title">PublicKey</span>
-          <span class="text">
-            {{ accountData[selectedElementIndex].accountPublicKey }}
-          </span>
-        </li>
-        <li class="list-group-item">
           <span class="title">Address</span>
           <span class="text">
             {{ accountData[selectedElementIndex].accountAddressPlain }}
@@ -64,41 +54,39 @@
           <span class="text">
             <template
               v-if="
-                accountData[selectedElementIndex].cosignatoryPublicKeys.length
+                accountData[selectedElementIndex].cosignatoryAddresses.length
               "
             >
               <span
                 v-for="p in accountData[selectedElementIndex]
-                  .cosignatoryPublicKeys"
+                  .cosignatoryAddresses"
                 :key="p"
                 class="d-block"
               >
-                {{ p }}
+                {{ $graphUtil.hexAddressToPlain(p) }}
               </span>
             </template>
-            <template v-else>
-              -
-            </template>
+            <template v-else> - </template>
           </span>
         </li>
         <li class="list-group-item">
           <span class="title">Multisig PublicKey</span>
           <span class="text">
             <template
-              v-if="accountData[selectedElementIndex].multisigPublicKeys.length"
+              v-if="
+                accountData[selectedElementIndex].cosignatoryAddresses.length
+              "
             >
               <span
                 v-for="p in accountData[selectedElementIndex]
-                  .multisigPublicKeys"
+                  .cosignatoryAddresses"
                 :key="p"
                 class="d-block"
               >
-                {{ p }}
+                {{ $graphUtil.hexAddressToPlain(p) }}
               </span>
             </template>
-            <template v-else>
-              -
-            </template>
+            <template v-else> - </template>
           </span>
         </li>
       </ul>
@@ -109,10 +97,6 @@
 <script>
 /* global google */
 import ScrollBooster from 'scrollbooster'
-import axios from 'axios'
-import template from '~/assets/multisigAccountTemplate.ejs'
-import convert from '~/assets/nem2-library/convert.js'
-import base32 from '~/assets/nem2-library/base32.js'
 
 export default {
   components: {},
@@ -148,13 +132,12 @@ export default {
       this.accountData = []
       this.clearScrollBooster()
       const account = this.inputAccount.replace(/-/g, '').replace(/^0x/, '')
-      let selfPublicKey
-      return this.getGraph(account)
+      let selfAddressPlain
+      return this.$graphUtil
+        .getGraph(account)
         .then((graph) => {
-          const level0GraphIndex = graph.findIndex((g) => g.level === 0)
-          selfPublicKey =
-            graph[level0GraphIndex].multisigEntries[0].multisig.accountPublicKey
-          return generateAccountData(graph)
+          selfAddressPlain = this.$graphUtil.getSelfAddressPlain(graph)
+          return this.$graphUtil.generateAccountData(graph)
         })
         .then((accountData) => {
           this.accountData = accountData
@@ -163,7 +146,10 @@ export default {
           this.errorMessage = e.message
         })
         .finally(() => {
-          const chartData = generateChatData(this.accountData, selfPublicKey)
+          const chartData = this.$graphUtil.generateChartData(
+            this.accountData,
+            selfAddressPlain
+          )
           const chartElement = this.$refs.chart_div
           this.drawGraph(chartData, chartElement)
           this.updateScrollBooster()
@@ -191,10 +177,6 @@ export default {
         }
       })
     },
-    getGraph(account) {
-      const url = `${process.env.REST}/account/${account}/multisig/graph`
-      return this.$axios.$get(url)
-    },
     clearScrollBooster() {
       if (this.scrollBooster === null) return
       this.scrollBooster.destroy()
@@ -214,94 +196,5 @@ export default {
       })
     },
   },
-}
-
-function addEncodedAddress(multisig) {
-  multisig.accountAddressPlain = multisig.accountAddress
-    ? base32.encode(convert.hexToUint8(multisig.accountAddress))
-    : null
-  return multisig
-}
-
-function generateChatData(accountData, selfPublicKey) {
-  return accountData.map((account) => {
-    return [
-      {
-        v: account.key,
-        f: template({ account, selfPublicKey }),
-      },
-      account.parent,
-      null,
-    ]
-  })
-}
-
-async function generateAccountData(graph) {
-  if (graph.length === 0) return []
-  const accounts = []
-  // 小さいレベルから開始
-  const rootLevel = graph[0].level
-  for (const root of graph[0].multisigEntries) {
-    const rootKey =
-      Math.random().toString(32).substring(2) +
-      '-' +
-      root.multisig.accountPublicKey
-    accounts.push({
-      level: rootLevel,
-      key: rootKey,
-      parent: null,
-      ...addEncodedAddress(root.multisig),
-    })
-    for (const cosignatoryPublicKey of root.multisig.cosignatoryPublicKeys) {
-      await findChildRecursive(
-        cosignatoryPublicKey,
-        rootLevel + 1,
-        rootKey,
-        accounts,
-        graph
-      )
-    }
-  }
-  return accounts
-}
-
-async function findChildRecursive(
-  publicKey,
-  level,
-  parentKey,
-  accumulator,
-  originalGraph
-) {
-  const levelGraph = originalGraph.find((g) => g.level === level)
-  if (levelGraph === undefined) {
-    // レベルが見つからなかった場合はなにもしない
-    return
-  }
-  const accountKey = Math.random().toString(32).substring(2) + '-' + publicKey
-  let multisigEntry = levelGraph.multisigEntries.find(
-    (multisigEntry) => multisigEntry.multisig.accountPublicKey === publicKey
-  )
-  if (multisigEntry === undefined) {
-    // 公開鍵からエントリーが見つからなかった場合は新規取得
-    const url = `${process.env.REST}/account/${publicKey}/multisig`
-    const multisigRes = await axios.get(url)
-    multisigEntry = multisigRes.data
-  }
-  accumulator.push({
-    level,
-    key: accountKey,
-    parent: parentKey,
-    ...addEncodedAddress(multisigEntry.multisig),
-  })
-  for (const cosignatoryPublicKey of multisigEntry.multisig
-    .cosignatoryPublicKeys) {
-    await findChildRecursive(
-      cosignatoryPublicKey,
-      level + 1,
-      accountKey,
-      accumulator,
-      originalGraph
-    )
-  }
 }
 </script>
