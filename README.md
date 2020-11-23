@@ -2,6 +2,10 @@
 
 ![image](https://user-images.githubusercontent.com/26595148/72197624-b8cd6b00-3466-11ea-9521-ab485523dbd9.png)
 
+# compatibility
+
+symbol testnet 0.10.0.x compatible
+
 ## live demo
 
 https://planethouki.github.io/nem2-multisig-graph/
