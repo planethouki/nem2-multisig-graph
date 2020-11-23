@@ -68,13 +68,14 @@ export default {
         loader: 'ejs-loader',
       })
     },
+    publicPath: '/n/',
   },
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
     bootstrapVueCSS: false, // Or `bvCSS: false`
   },
   router: {
-    base: '/multisig-graph/',
+    base: `/${process.env.npm_package_name}/`,
   },
   env: {
     REST: 'https://d2o8j5pgb7wqnq.cloudfront.net',

@@ -4,7 +4,7 @@
 
 ## live demo
 
-https://tools48gh23s.z31.web.core.windows.net/multisig-graph/
+https://planethouki.github.io/nem2-multisig-graph/
 
 ## Build Setup
 
