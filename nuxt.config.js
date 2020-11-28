@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 export default {
   mode: 'spa',
   /*
@@ -40,6 +42,7 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
+    '@nuxtjs/google-analytics',
   ],
   /*
    ** Nuxt.js modules
@@ -78,8 +81,11 @@ export default {
     base: `/${process.env.npm_package_name}/`,
   },
   env: {
-    REST: 'https://d2o8j5pgb7wqnq.cloudfront.net',
-    REF_ADDRESS: 'TCIQ6MSROK4NQZYYZPP7GFIQXADXZTKSUZUCPQI',
+    REST: process.env.REST_BASE_URL,
+    REF_ADDRESS: process.env.REF_ADDRESS,
   },
   srcDir: 'src/',
+  googleAnalytics: {
+    id: process.env.GOOGLE_ANALYTICS,
+  },
 }

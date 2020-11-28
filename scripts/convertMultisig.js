@@ -30,20 +30,12 @@ Alice
  */
 
 const networkType = NetworkType.TEST_NET
-const generationHash =
-  '6C1B92391CCB41C96478471C2634C111D9E989DECD66130C0430B5B8D20117CD'
-const mosaicId = '5B66E76BECAD0860'
+const generationHash = process.env.GENERATION_HASH
+const mosaicId = process.env.MOSAIC_ID
 
-const nodeList = [
-  'http://api-01.ap-northeast-1.0.10.0.x.symboldev.network:3000',
-  'http://api-01.ap-southeast-1.0.10.0.x.symboldev.network:3000',
-  'http://api-01.eu-central-1.0.10.0.x.symboldev.network:3000',
-  'http://api-01.eu-west-1.0.10.0.x.symboldev.network:3000',
-  'http://api-01.us-east-1.0.10.0.x.symboldev.network:3000',
-  'http://api-01.us-west-1.0.10.0.x.symboldev.network:3000',
-]
+const nodeList = process.env.NODE_LIST_CSV.split(',')
 
-const url = nodeList[2]
+const url = nodeList[0]
 const initiator = Account.createFromPrivateKey(
   process.env.PRIVATE_KEY,
   networkType
