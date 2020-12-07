@@ -20,11 +20,11 @@
           <span class="text">-</span>
         </li>
         <li class="list-group-item">
-          <span class="title">Cosignatory PublicKey</span>
+          <span class="title">Cosignatory Address</span>
           <span class="text">-</span>
         </li>
         <li class="list-group-item">
-          <span class="title">Multisig PublicKey</span>
+          <span class="title">Multisig Address</span>
           <span class="text">-</span>
         </li>
       </ul>
@@ -50,7 +50,7 @@
           </span>
         </li>
         <li class="list-group-item">
-          <span class="title">Cosignatory PublicKey</span>
+          <span class="title">Cosignatory Address</span>
           <span class="text">
             <template
               v-if="
@@ -70,7 +70,7 @@
           </span>
         </li>
         <li class="list-group-item">
-          <span class="title">Multisig PublicKey</span>
+          <span class="title">Multisig Address</span>
           <span class="text">
             <template
               v-if="
