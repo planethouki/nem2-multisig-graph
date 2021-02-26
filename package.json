@@ -14,14 +14,15 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.12.2",
-    "bootstrap": "^4.5.3",
-    "bootstrap-vue": "^2.19.0",
-    "bootswatch": "^4.5.3",
+    "@nuxtjs/axios": "^5.13.1",
+    "bootstrap": "^4.6.0",
+    "bootstrap-vue": "^2.21.2",
+    "bootswatch": "^4.6.0",
     "dotenv": "^8.2.0",
     "nuxt": "^2.14.7",
     "scrollbooster": "^2.3.0",
-    "symbol-sdk": "^0.21.0"
+    "symbol-sdk": "^0.23.2",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.2",
