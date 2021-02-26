@@ -78,7 +78,10 @@ export default {
     bootstrapVueCSS: false, // Or `bvCSS: false`
   },
   router: {
-    base: `/${process.env.npm_package_name}/`,
+    base:
+      process.env.NODE_ENV === 'development'
+        ? '/'
+        : `/${process.env.npm_package_name}/`,
   },
   env: {
     REST: process.env.REST_BASE_URL,
