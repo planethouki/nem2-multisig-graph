@@ -41,8 +41,7 @@ export default {
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module',
-    '@nuxtjs/google-analytics',
+    '@nuxtjs/eslint-module'
   ],
   /*
    ** Nuxt.js modules
@@ -52,6 +51,7 @@ export default {
     'bootstrap-vue/nuxt',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/google-gtag'
   ],
   /*
    ** Axios module configuration
@@ -88,7 +88,20 @@ export default {
     REF_ADDRESS: process.env.REF_ADDRESS,
   },
   srcDir: 'src/',
-  googleAnalytics: {
-    id: process.env.GOOGLE_ANALYTICS,
-  },
+
+
+  'google-gtag': {
+    id: process.env.GTAG,
+    config: {
+      anonymize_ip: true, // anonymize IP
+      send_page_view: false, // might be necessary to avoid duplicated page track on page reload
+      linker: {
+        domains: [
+          process.env.GTAG_DOMAIN
+        ]
+      }
+    },
+    debug: false, // enable to track in dev mode
+    disableAutoPageTrack: false // disable if you don't want to track each page route with router.afterEach(...).
+  }
 }
