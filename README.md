@@ -4,7 +4,7 @@
 
 # compatibility
 
-symbol testnet 0.10.0.x compatible
+symbol testnet 0.10.0.7 compatible
 
 ## live demo
 
