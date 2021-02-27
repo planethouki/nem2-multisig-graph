@@ -8,6 +8,7 @@
         Try Anyway
       </b-button>
     </div>
+    <div class="container-fluid">使用ノード {{ restUrl }}</div>
   </div>
 </template>
 
@@ -17,6 +18,9 @@ export default {
   computed: {
     tryAnywayTo() {
       return '/graph?account=' + process.env.REF_ADDRESS
+    },
+    restUrl() {
+      return process.env.REST
     },
   },
 }
