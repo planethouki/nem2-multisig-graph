@@ -22,7 +22,7 @@
     "dotenv": "^8.2.0",
     "nuxt": "^2.14.7",
     "scrollbooster": "^2.3.0",
-    "symbol-sdk": "^0.23.2",
+    "symbol-sdk": "^1.0.1",
     "utf8": "^3.0.0"
   },
   "devDependencies": {
