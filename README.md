@@ -2,7 +2,7 @@
 
 ![image](https://user-images.githubusercontent.com/26595148/72197624-b8cd6b00-3466-11ea-9521-ab485523dbd9.png)
 
-# compatibility
+## compatibility
 
 symbol testnet 0.10.0.7 compatible
 
@@ -10,7 +10,13 @@ symbol testnet 0.10.0.7 compatible
 
 https://planethouki.github.io/nem2-multisig-graph/
 
-## Build Setup
+## todo
+
+- [ ] 1.0.0.0 compatible
+- [ ] 1.0.0.0 account setup
+- [ ] node info display
+
+# Build Setup
 
 ``` bash
 # install dependencies
