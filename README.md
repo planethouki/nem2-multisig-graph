@@ -17,7 +17,6 @@ https://planethouki.github.io/nem2-multisig-graph/
 - [ ] node info display
 - [ ] mainnet support
 - [ ] endpoint select
-- [ ] dependencies update
 
 # Build Setup
 
