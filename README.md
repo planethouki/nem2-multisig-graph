@@ -14,7 +14,7 @@ https://planethouki.github.io/nem2-multisig-graph/
 
 - [x] 1.0.0.0 compatible
 - [x] 1.0.0.0 account setup
-- [ ] node info display
+- [x] node info display
 - [ ] mainnet support
 - [ ] endpoint select
 
