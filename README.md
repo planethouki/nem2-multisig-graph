@@ -4,7 +4,7 @@
 
 ## compatibility
 
-symbol testnet 1.0.x.0 compatible
+symbol 1.0.x.x compatible
 
 ## live demo
 
@@ -15,7 +15,6 @@ https://planethouki.github.io/nem2-multisig-graph/
 - [x] 1.0.0.0 compatible
 - [x] 1.0.0.0 account setup
 - [x] node info display
-- [ ] mainnet support
 - [ ] endpoint select
 - [ ] unit test
 - [ ] multisig graph parser
